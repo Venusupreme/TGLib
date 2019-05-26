@@ -1,0 +1,23 @@
+{
+  "name": "tglib",
+  "version": "1.0.0",
+  "description": "The official Testing Grounds library. Contains \"Town Of Salem\" logic, roles, actions and all.",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoogleFeud/TGLib.git"
+  },
+  "keywords": [
+    "TG"
+  ],
+  "author": "GoogleFeud",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/GoogleFeud/TGLib/issues"
+  },
+  "homepage": "https://github.com/GoogleFeud/TGLib#readme"
+}
