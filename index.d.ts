@@ -59,25 +59,26 @@ export class Player {
      public votesFor(player: Player) : void
      public unvote() : void
      public kill(killer: Player) : void
-     public lynch(way: string) : void
+     public lynch(way: string, emit: boolean) : void
      public clearData() : void
      public delete() : void
-     public setAction(target: Player, other: Object) : void
+     public setAction(target: Player, other: {factionalAction: false}) : void
      public cancelAction() : void
      public setRole(role: Role) : void
      public toString() : string
 }
 
 export class Action {
-     constructor(doer: Player, target: Player, other: Object)
+     constructor(doer: Player, target: Player, other: {factionalAction: false})
      public doer: Player
      public target: Player
      public other: Object
+     public factionalAction: boolean
      public cancel() : void
 }
 
 export class Phase {
-      constructor(name: String, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean})
+      constructor(name: String, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean, listenForMajority: boolean, listenForPlurality: boolean, lynchPlayer: boolean})
       public name: string
       public data: {first: boolean, amount: number, duration: number, next: string}
       public first: boolean
@@ -85,6 +86,9 @@ export class Phase {
       public duration: number
       public evaluateActions: boolean
       public next: string
+      public listenForMajority: boolean
+      public listenForPlurality: boolean
+      public lynchPlayer: boolean
       public toString() : string
 }
 
@@ -112,9 +116,9 @@ export class PhaseCollector extends Collection<string, Phase> {
       public engine: Engine
       public current?: Phase
       public firstPhase?: Phase
-      public set(name: string, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean}) : Phase
+      public set(name: string, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean, listenForPlurality: boolean, listenForMajority: boolean, lynchPlayer: boolean}) : Phase
       public endCurrent() : void
-      public jumpTo(phaseName: string, clear: boolean) : void
+      public jumpTo(phaseName: string, clear: boolean, emitEnd: boolean) : void
 }
 
 export class PlayerCollector extends Collection<string, Player> {
@@ -199,7 +203,7 @@ export class Engine {
      public on(event: "vote", listener: (voter: Player, votee: Player) => void) : void
      public on(event: "unvote", listener: (voter: Player, votee: Player) => void) : void
      public on(event: "kill", listener: (victim: Player, killer: Player) => void) : void
-     public on(event: "lynch", listener: (player: Player, way: string) => void) : void
+     public on(event: "lynch", listener: (player: Player, way: "majority"|"plurality") => void) : void
      public on(event: "deletePlayer", listener: (player: Player) => void) : void
      public on(event: "setAction", listener: (player: Player) => void) : void
      public on(event: "cancelAction", listener: (player: Player) => void) : void
