@@ -10,6 +10,7 @@ export class Collection<K, V> extends Map {
       public random(amount: Number) : V|Collection<K, V>
       public sweep(fn: callback<K, V>) : Collection<K, V>
       public split(fn: callback<K, V>) : Array<Collection<K, V>>
+      public clone() : Collection<K, V>
       public keyArray() : Array<K>
       public valArray() : Array<V>
       public first() : V
@@ -27,6 +28,8 @@ export class Role {
       public amount: number
       public visits: boolean
       public factionalAction: boolean
+      public rolledFrom: Array<String>
+      public attrs: Collection<string, any>
       public action: (doer: Player, target: Player, other: Object) => void
       public clone() : Role
       public addAttr(key: string, val: any) : Role
@@ -56,6 +59,7 @@ export class Player {
      public action?: Action
      public actionHistory: Collection<string, Action>
      public visitors: Collection<string, Player>
+     public roleAttrs: Collection<string, any>
      public votesFor(player: Player) : void
      public unvote() : void
      public kill(killer: Player) : void
@@ -116,6 +120,7 @@ export class PhaseCollector extends Collection<string, Phase> {
       public engine: Engine
       public current?: Phase
       public firstPhase?: Phase
+      public get(key: string) : Phase
       public set(name: string, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean, listenForPlurality: boolean, listenForMajority: boolean, lynchPlayer: boolean}) : Phase
       public endCurrent() : void
       public jumpTo(phaseName: string, clear: boolean, emitEnd: boolean) : void
@@ -125,17 +130,20 @@ export class PlayerCollector extends Collection<string, Player> {
       constructor(engine: Engine)
       public engine: Engine
       public nolynch: NoLynch
+      public get(name: string) : Player
       public set(name: string) : Player
       public delete(name: string) : void
       public dead(): Collection<string, Player>
       public alive(): Collection<string, Player>
       public fromSide(sideName: string, dead: boolean) : Collection<string, Player>
+      public fromAlign(sideName: string, alignName: string, dead: boolean) : Collection<string, Player>
 }
 
 export class RoleCollector extends Collection<string, Role> {
       constructor(engine: Engine)
       public engine: Engine
       public original: Collection<string, Role> 
+      public get(name: string) : Role
       public rules: (role: Role, side: String, alignment: String) => boolean
       public set(name: string, data: {name: string, side: string, alignment: string, unique: boolean, blocked: boolean, amount: number, visits: boolean, factionalAction: boolean, action: (doer: Player, target: Player, other: Object) => void}) : Role
       public parseSet(object: Object) : Role
@@ -151,6 +159,7 @@ export class RoleCollector extends Collection<string, Role> {
 export class SideCollector extends Collection<string, Side> {
       constructor(engine: Engine)
       public engine: Engine
+      public get(name: string) : Side
       public set(name: string, data: {players: Array<Player>, roles: Array<Role>}) : Side
       public addPlayer(side: string, player: Player) : void
       public removePlayer(side: string, player: string) : void
@@ -168,6 +177,10 @@ export class ActionManager {
 export class PriorityList {
      constructor(data: Object)
      public forEach(fn: (element: any, position: number, microposition: number) => void) : void
+     public order(...list : String) : Array<String>
+     public highestOf(...list: String) : String
+     public lowestOf(...list: String) : String
+     public compare(item1: String, item2: String) : "higher"|"lower"
 }
 
 export class Timer {
@@ -199,6 +212,7 @@ export class Engine {
      public roll(rolelist: Array<String>) : void
      public start() : void
      public clear() : void
+     public on(event: "start",  listener: () => void) : void
      public on(event: "setRole", listener: (player: Player) => void) : void
      public on(event: "vote", listener: (voter: Player, votee: Player) => void) : void
      public on(event: "unvote", listener: (voter: Player, votee: Player) => void) : void

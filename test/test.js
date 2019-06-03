@@ -7,7 +7,7 @@ const Game = new Mafia.Engine({
          if (Game.sides.sizeOf("Evil") > Game.sides.sizeOf("Town")) return "Evil"; // If the majority of players are evil, evils win.
          if (Game.sides.sizeOf("Evil") == 0) return 'Town'; // If there aren't any alive evil players, town wins. 
      },
-     rolelist: ['Lookout', 'Town Protective', 'Sheriff', 'Plague', 'Wolf', 'Evil Killing'],
+     rolelist: ['Lookout', 'Town Protective', 'Sheriff', 'Plague', 'Evil Killing', 'Evil Killing'],
      rules: (role, side, alignment) => {
          if (role.alignment == 'Protective' && side == 'Random' && alignment == 'Town') return false;
          return true;
@@ -53,11 +53,13 @@ Game.players.set("BS")
 Game.players.set("Poptart")
 Game.players.set("Parallax")
 
+
 Game.on("setRole", player => {
        console.log(`${player} is a ${player.role}`);
 });
 
 Game.on("Day", phase => {
+    console.log(Game.roles.get('Wolf'));
     console.log(`It's ${phase}! Majority: ${Game.settings.majority.value}`);
     const rng = Game.players.random();
     Game.players.random().votesFor(rng);
