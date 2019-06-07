@@ -39,7 +39,7 @@ Game.roles.set("Doctor", {side: "Town", alignment: "Protective", action: (doer, 
 Game.roles.set("Wolf", {side: "Evil", alignment: "Killing", factionalAction: true, action: (doer, target) => {
       if (!target.protected) target.kill(doer);
       else console.log(`${doer}: You couldn't attack ${target}! They were healed! The doctor now has ${Game.players.find(p => p.role.name == 'Doctor').role.heals} heals!`)
-}});
+}}).addAttr("test", 3).addAttr("test2", 66);
 Game.roles.set("Plague", {side: "Evil", alignment: "Support", visits: false, action: (doer, target) => {
    if (doer.role.things == 0)  return console.log(`${doer}: You don't have anymore things!`);
    target.protected = false;
@@ -59,7 +59,6 @@ Game.on("setRole", player => {
 });
 
 Game.on("Day", phase => {
-    console.log(Game.roles.get('Wolf'));
     console.log(`It's ${phase}! Majority: ${Game.settings.majority.value}`);
     const rng = Game.players.random();
     Game.players.random().votesFor(rng);

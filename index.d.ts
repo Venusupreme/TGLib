@@ -61,6 +61,7 @@ export class Player {
      public visitors: Collection<string, Player>
      public roleAttrs: Collection<string, any>
      public votesFor(player: Player) : void
+     public roleblock() : void
      public unvote() : void
      public kill(killer: Player) : void
      public lynch(way: string, emit: boolean) : void
@@ -77,7 +78,8 @@ export class Action {
      public doer: Player
      public target: Player
      public other: Object
-     public factionalAction: boolean
+     public factionalAction: boolea
+     public roleblocked: boolean
      public cancel() : void
 }
 
