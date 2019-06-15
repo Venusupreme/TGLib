@@ -178,11 +178,17 @@ export class ActionManager {
 
 export class PriorityList {
      constructor(data: Object)
+     public original: PriorityList
      public forEach(fn: (element: any, position: number, microposition: number) => void) : void
-     public order(...list : String) : Array<String>
-     public highestOf(...list: String) : String
-     public lowestOf(...list: String) : String
+     public order(...list : Array<String>) : Array<String>
+     public highestOf(...list : Array<String>) : String
+     public lowestOf(...list : Array<String>) : String
      public compare(item1: String, item2: String) : "higher"|"lower"
+     public delete(item: String) : void
+     public insert(item: String, index: Number, subIndex: Number) : void
+     public move(item: String, indexTo: Number, subIndexTo?: Number) : () => void
+     public switch(item1: String, item2: String) : void
+     public clone() : PriorityList
 }
 
 export class Timer {
