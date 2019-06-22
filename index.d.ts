@@ -29,7 +29,7 @@ export class Role {
       public visits: boolean
       public factionalAction: boolean
       public rolledFrom: Array<String>
-      public attrs: Collection<string, any>
+      public roleAttrs: Object
       public action: (doer: Player, target: Player, other: Object) => void
       public clone() : Role
       public addAttr(key: string, val: any) : Role
@@ -59,7 +59,7 @@ export class Player {
      public action?: Action
      public actionHistory: Collection<string, Action>
      public visitors: Collection<string, Player>
-     public roleAttrs: Collection<string, any>
+     public roleAttrs: {attack: 0, defense: 0}
      public votesFor(player: Player) : void
      public roleblock() : void
      public unvote() : void
@@ -67,7 +67,7 @@ export class Player {
      public lynch(way: string, emit: boolean) : void
      public clearData() : void
      public delete() : void
-     public setAction(target: Player, other: {factionalAction: false}) : void
+     public setAction(target: Player, other: {factionalAction: false, visits: true}) : void
      public cancelAction() : void
      public setRole(role: Role) : void
      public toString() : string
