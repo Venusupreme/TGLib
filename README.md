@@ -1,6 +1,6 @@
 # TGLib
 
-The official Testing Grounds library. Contains "Town Of Salem" logic, roles, actions and all. This library tries to copy the logic of "Town Of Salem" and add more on top of it. 
+The official Testing Grounds library. Contains "Town Of Salem" logic and all. This library tries to copy the logic of "Town Of Salem" and add more on top of it. 
 
 **Integrated Differences:**
 
