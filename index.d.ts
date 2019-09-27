@@ -1,5 +1,9 @@
 import {EventEmitter} from 'events';
 
+export class Listener extends EventEmitter {
+      emitReturn(event: string, ...args: any) : any
+}
+
 export type callback<K, V> = (val: V, key: K) => any
 
 export class Collection<K, V> extends Map {
@@ -205,7 +209,7 @@ export class Timer {
       public reset() : void
 }
 
-export class Engine {
+export class Engine extends Listener {
      constructor(settings: {rolelist: Array<string>, stalemate: () => boolean, majority: boolean, plurality: boolean, rules: (role: Role, side: String, alignment: String) => boolean, priorityList: Object})
      public players: PlayerCollector
      public roles: RoleCollector
@@ -227,10 +231,12 @@ export class Engine {
      public on(event: "kill", listener: (victim: Player, killer: Player) => void) : void
      public on(event: "lynch", listener: (player: Player, way: "majority"|"plurality") => void) : void
      public on(event: "deletePlayer", listener: (player: Player) => void) : void
+     public on(event: "beforeSetAction", listener: (player: Player) => void) : void
      public on(event: "setAction", listener: (player: Player) => void) : void
      public on(event: "cancelAction", listener: (player: Player) => void) : void
      public on(event: "cancelAction", listener: (player: Player) => void) : void
      public on(event: "tick", listener: () => void) : void
+     public on(event: "beforeExecuteAction", listener: (player: Player) => void) : void
      public on(event: "executeAction", listener: (player: Player) => void) : void
      public on(event: "factionalActionCancel", listener: (canceled: Player, newP: Player) => void) : void
      public on(event: "end", listener: (winner: Side) => void) : void
