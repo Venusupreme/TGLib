@@ -19,9 +19,8 @@ There are 3 main types of objects:
 `Structures`: These usually represent something *in* town of salem. For example a player, a role, a night action, a phase, etc.       
 `Collectors`: Collectors collect structures and put them in `Units` (A class that extends the `Map` class). They also make useful methods and properties regarding the collected structures accessible.              
 
-## Wiki 
+## Version 
 
-This repo's wiki explains everything in detail. Check it out here: https://github.com/GoogleFeud/TGLib/wiki
-
+The current version of TGLib is: 1.0.1
 
 
