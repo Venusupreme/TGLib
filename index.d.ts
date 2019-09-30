@@ -74,7 +74,8 @@ export class Phase {
    public arrangements: Unit<Arrengement>
    public begin(): void
    public end(): void
-   public schedule(id: string, data: {executor: () => void, at: number, when: "start"|"end", checker?: () => boolean}) : Arrangement
+   public schedule(id: string, data: {executor: () => void, at?: number, when: number, checker?: () => boolean}) : Arrangement
+   public checkForArrangements() : void
    public toString(): string
 }
 
@@ -127,6 +128,7 @@ export class EventListener {
       public clear() : void
       public off(event: string) : void
       public get(event: string) : Event
+      public extendAll(when: "before"|"after", fn: (...args: any) => any) : void
 }
 
 export class Majority {

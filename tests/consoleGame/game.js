@@ -20,7 +20,16 @@ Game.phases.get("Day").schedule("voteout", {
        player3.votesFor(player2);
    },
    at: 1,
-   when: "start"
+   when: 10
+});
+
+Game.phases.get("Judgement").schedule("setvotes", {
+   executor: () => {
+       player1.judge = "guilty";
+       player3.judge = "innocent";
+   },
+   at: Game.phases.get("Judgement").iterations,
+   when: 5
 });
 
 Game.start();

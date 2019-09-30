@@ -38,7 +38,27 @@ module.exports = function(Game) {
 
      Game.events.on("majority", (lynched) => {
          lynched.invisible = true;
-          console.log(`${lynched}, you are now on trial!`);
+          Game.onTrial = lynched;
           Game.phases.jumpTo("Defense", true);
+     });
+
+     Game.events.on("Defense", () => {
+          console.log(`${Game.onTrial}, you are now on trial!`);
+          for ([, player] of Game.players) player.judge = "abstain";
+     });
+
+     Game.events.on("Judgement-End", () => {
+         const guilties = Game.players.filter(p => p.judge === "guilty");
+         console.log(guilties.size, Game.majority.value);
+         if (guilties.size >= Game.majority.value) return Game.phases.jumpTo("Last Words");
+         Game.phases.jumpTo("Night");
+     });
+
+     Game.events.on("Last Words-End", () => {
+         console.log(`${Game.onTrial}, you have been lynched!`);
+         Game.onTrial.kill();
+         Game.onTrial.invisible = false;
+         Game.onTrial = null;
+         for ([, player] of Game.players) player.judge = "abstain";
      });
 }
