@@ -21,6 +21,6 @@ There are 3 main types of objects:
 
 ## Version 
 
-The current version of TGLib is: 1.0.1
+The current version of TGLib is: `1.0rc1`
 
 
