@@ -183,7 +183,7 @@ export class PhaseCollector extends Unit<Phase> {
       public engine: Engine
       public current: Phase
       public first: Phase
-      public set(data: {}) : Phase
+      public set(...data: Array<Any>) : void
       public move(end: boolean) : void
       public jumpTo(phase: string) : void
 }
