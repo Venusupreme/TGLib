@@ -1,243 +1,218 @@
 import {EventEmitter} from 'events';
+import { StringDecoder } from 'string_decoder';
 
-export type callback<K, V> = (val: V, key: K) => any
+export class Listener extends EventEmitter {
+      emitReturn(event: string, ...args: any) : any
+}
 
-export class Collection<K, V> extends Map {
-      public find(fn: callback<K, V>) : V
-      public some(fn: callback<K, V>) : Boolean
-      public filter(fn: callback<K, V>) : Collection<K, V>
-      public map(fn: callback<K, V>) : Array<V>
-      public random(amount: Number) : V|Collection<K, V>
-      public sweep(fn: callback<K, V>) : Collection<K, V>
-      public split(fn: callback<K, V>) : Array<Collection<K, V>>
-      public clone() : Collection<K, V>
+export type callbackFetch<K, V> = (val: V, key: K) => boolean
+export type callbackCheck<K, V> = (val: V, key: K) => any
+
+export class Unit<V> extends Map<String, V> {
+      public find(fn: callbackFetch<K, V>) : V
+      public some(fn: callbackFetch<K, V>) : boolean
+      public every(fn: callbackFetch<K, V>) : boolean
+      public filter(fn: callbackFetch<K, V>) : Unit<V>
+      public map(fn: callbackCheck<K, V>) : Array<V>
+      public random(amount: number) : V|Unit<V>
+      public sweep(fn: callbackFetch<K, V>) : Unit<V>
+      public partition(fn: callbackFetch<K, V>) : Array<Unit<V>>
+      public clone() : Unit<V>
       public keyArray() : Array<K>
       public valArray() : Array<V>
       public first() : V
       public last() : V
-      public forEach(fn: callback<K, V>) : void
-}
-
-export class Role {
-      constructor(name: String, data: {name: string, side: string, alignment: string, unique: boolean, blocked: boolean, amount: number, visits: boolean, factionalAction: boolean, action: (doer: Player, target: Player, other: Object) => void})
-      public name: string
-      public side: Side
-      public alignment: string
-      public unique: boolean
-      public blocked: boolean
-      public amount: number
-      public visits: boolean
-      public factionalAction: boolean
-      public rolledFrom: Array<String>
-      public roleAttrs: Object
-      public action: (doer: Player, target: Player, other: Object) => void
-      public clone() : Role
-      public addAttr(key: string, val: any) : Role
+      public forEach(fn: callbackCheck<K, V>) : void
 }
 
 export class Side {
-      constructor(name: String, data: {players: Array<Player>, roles: Array<Role>})
       public name: string
-      public factionalActionExecutor?: Player
-      public players: Collection<string, Player>
-      public roles: Collection<string, Role>
+      public engine: Engine
+      public members: Unit<Player>
+      public size: number
+      public setFactionAction(value?: Player) : void
+      public toString() : string
+}
+
+export class Role {
+      public name: string
+      public engine: Engine
+      public side: Side
+      public alignment: string
+      public rolledFrom?: string
+      public unique: boolean
+      public amount?: number
+      public blocked: boolean
+      public visits: boolean
+      public factionAction: boolean
+      public action?: (player: Player, target: Player, data: {}) => void
+      public attack: number
+      public defense: number
+      private common: {}
+      public toString(): string
+      public copy(rolledFrom: string) : Role
+}
+
+export class Action {
+      public player: Player
+      public target: Player
+      public data: {}
+      public factionAction: boolean
+      public save() : void
+      public cancel(): void
+      public clear(): void
+      public exe() : void
+}
+
+export class Phase {
+   public name: string
+   public engine: Engine
+   public isFirst: boolean
+   public duration: number
+   public iterations: number
+   public next: string
+   public arrangements: Unit<Arrengement>
+   public begin(): void
+   public end(): void
+   public schedule(id: string, data: {executor: () => void, at?: number, when: number, checker?: () => boolean}) : Arrangement
+   public checkForArrangements() : void
+   public toString(): string
+}
+
+export class Player {
+    public name: string
+    public role?: Role
+    public dead: boolean
+    public engine: Engine
+    public votes: number
+    public votedFor?: Player
+    public votedBy: Unit<Player>
+    public visitors: Unit<Player>
+    public action?: Action
+    public roleblocked: boolean
+    public votePower: number
+    public invisible: boolean
+    public actionHistory: Unit<Action>
+    public votesFor(player: Player) : void
+    public unvote() : void
+    public canKill(target: PLayer) : boolean
+    public kill(killer?: Player) : void
+    public revive(reviver?: Player) : void
+    public setAction(target: Player, data: {factionAction?: Boolean}) : void
+    public setRole(role: Role) : void
+    public toString() : string
+}
+
+export class NoLynch {
+      public name: string
+      public votes: number
+      public votedBy: Unit<Player>
+      public nolynch: true
+      public dead: false
       public clear() : void
       public toString() : string
 }
 
-export class Player {
-     constructor(name: string, engine: Engine) 
-     public name: string
-     public role?: Role
-     public engine: Engine
-     public votes: Number
-     public dead: boolean
-     public votedFor?: Player
-     public killedBy?: Player
-     public votedBy: Collection<string, Player>
-     public votingPower: number
-     public action?: Action
-     public actionHistory: Collection<string, Action>
-     public visitors: Collection<string, Player>
-     public roleAttrs: {attack: 0, defense: 0}
-     public votesFor(player: Player) : void
-     public roleblock() : void
-     public unvote() : void
-     public kill(killer: Player) : void
-     public lynch(way: string, emit: boolean) : void
-     public clearData() : void
-     public delete() : void
-     public setAction(target: Player, other: {factionalAction: false, visits: true}) : void
-     public cancelAction() : void
-     public setRole(role: Role) : void
-     public toString() : string
-}
-
-export class Action {
-     constructor(doer: Player, target: Player, other: {factionalAction: false})
-     public doer: Player
-     public target: Player
-     public other: Object
-     public factionalAction: boolea
-     public roleblocked: boolean
-     public cancel() : void
-}
-
-export class Phase {
-      constructor(name: String, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean, listenForMajority: boolean, listenForPlurality: boolean, lynchPlayer: boolean})
+export class Event {
       public name: string
-      public data: {first: boolean, amount: number, duration: number, next: string}
-      public first: boolean
-      public amount: number
-      public duration: number
-      public evaluateActions: boolean
-      public next: string
-      public listenForMajority: boolean
-      public listenForPlurality: boolean
-      public lynchPlayer: boolean
-      public toString() : string
+      public executable: (...args: any) => any
+      public exe(...args: any) : any
+      public extendBefore(fn: (...args) => any) : void
+      public extendAfter(fn: (...args) => any) : void
 }
 
-export class NoLynch {
-      constructor(engine: Engine)
-      public votes: number
-      public votedBy: Collection<string, Player>
+export class EventListener {
+      public events: Unit<Event>
+      public on(event: string, fn: (...args: any) => any) : void
+      public emit(event: string, ...args: any) : any
+      public clear() : void
+      public off(event: string) : void
+      public get(event: string) : Event
+      public extendAll(when: "before"|"after", fn: (...args: any) => any) : void
+}
+
+export class Majority {
       public engine: Engine
-      public lynch() : void
-      public toString() : string
+      public value: number
+      public update(): void
+      public check() : Player|null
+      public valueOf() : number
+      public toString(): string
 }
 
-export class Settings {
-      constructor(engine: Engine, data: {rolelist: Array<string>, stalemate: () => boolean, majority: boolean, plurality: boolean, rules: (role: Role, side: String, alignment: String) => boolean, priorityList: Object})
-      public engine: Engine
-      public rolelist: Array<string>
-      public stalemate: () => boolean
-      public majority: {enabled: boolean, value: number}
-      public plurality: boolean
-      public scaleMajority() : void
-}
-
-export class PhaseCollector extends Collection<string, Phase> {
-      constructor(engine: Engine)
-      public engine: Engine
-      public current?: Phase
-      public firstPhase?: Phase
-      public get(key: string) : Phase
-      public set(name: string, data: {first: boolean, amount: number, duration: number, next: string, evaluateActions: boolean, listenForPlurality: boolean, listenForMajority: boolean, lynchPlayer: boolean}) : Phase
-      public endCurrent() : void
-      public jumpTo(phaseName: string, clear: boolean, emitEnd: boolean) : void
-}
-
-export class PlayerCollector extends Collection<string, Player> {
-      constructor(engine: Engine)
-      public engine: Engine
-      public nolynch: NoLynch
-      public get(name: string) : Player
-      public set(name: string) : Player
-      public delete(name: string) : void
-      public dead(): Collection<string, Player>
-      public alive(): Collection<string, Player>
-      public fromSide(sideName: string, dead: boolean) : Collection<string, Player>
-      public fromAlign(sideName: string, alignName: string, dead: boolean) : Collection<string, Player>
-}
-
-export class RoleCollector extends Collection<string, Role> {
-      constructor(engine: Engine)
-      public engine: Engine
-      public original: Collection<string, Role> 
-      public get(name: string) : Role
-      public rules: (role: Role, side: String, alignment: String) => boolean
-      public set(name: string, data: {name: string, side: string, alignment: string, unique: boolean, blocked: boolean, amount: number, visits: boolean, factionalAction: boolean, action: (doer: Player, target: Player, other: Object) => void}) : Role
-      public parseSet(object: Object) : Role
-      public setRules(rules: (role: Role, side: String, alignment: String) => boolean) : void
-      public any() : ?Role
-      public fromSide(side: String) : ?Role
-      public fromAlign(side: string, alignment: String) : ?Role
-      public byName(name: string) : string
-      public fill(side: string, alignment: string) : ?Role
-      public fillRolelist(rolelist: Array<string>) : {names: Array<string>, roles: Collection<string, Role>}
-}
-
-export class SideCollector extends Collection<string, Side> {
-      constructor(engine: Engine)
-      public engine: Engine
-      public get(name: string) : Side
-      public set(name: string, data: {players: Array<Player>, roles: Array<Role>}) : Side
-      public addPlayer(side: string, player: Player) : void
-      public removePlayer(side: string, player: string) : void
-      public sizeOf(side: string) : number
-}
-
-export class ActionManager {
-      constructor(engine: Engine)
-      public engine: Engine
-      public priorityList?: PriorityList
-      public setPriorityList(list: Object) : void
-      public evaluate(list?: Object) : void
-}
-
-export class PriorityList {
-     constructor(data: Object)
-     public original: PriorityList
-     public forEach(fn: (element: any, position: number, microposition: number) => void) : void
-     public order(...list : Array<String>) : Array<String>
-     public highestOf(...list : Array<String>) : String
-     public lowestOf(...list : Array<String>) : String
-     public compare(item1: String, item2: String) : "higher"|"lower"
-     public delete(item: String) : void
-     public insert(item: String, index: Number, subIndex: Number) : void
-     public move(item: String, indexTo: Number, subIndexTo?: Number) : () => void
-     public switch(item1: String, item2: String) : void
-     public clone() : PriorityList
+export class Arrangement {
+      public phase: Phase
+      public id: string
+      public executor: () => any
+      public checker?: () => boolean
+      public at: number
+      public when: "start"|"end"
+      public exe() : void
+      public overwrite(data: {executor?: () => any, checker?: () => boolean, at?: number, when?: "start"|"end"}) : void
 }
 
 export class Timer {
-      constructor(engine: Engine)
       public engine: Engine
-      public paused: boolean
       public elapsed: number
-      public startedAt?: number
-      public loop(fn: (this: Timer) => void) : void
+      public startedAt: number
+      public loop(fn: () => any) : void
       public timeLeft() : {minutes: number, seconds: number}
-      public pause() : void
-      public resume() : void
       public stop() : void
-      public reset() : void
+      public reset(): void
+}
+
+export class SideCollector extends Unit<Side> {
+     public engine: Engine
+     public set(name: string) : Side
+     public sizeOf(side: string) : number
+}
+
+export class RoleCollector extends Unit<Role> {
+      public engine: Engine
+      public set(...roles: Array<{}>) : void
+      public rules: (side: string, alignment?: string|null, role: Role) => boolean
+      public any(): Role
+      public getByName(name: string): Role
+      public fromRandomSide(side: string) : Role
+      public fromAlignment(side: string, alignment: string) : Role
+      public fill(side: string, alignment: string) : Role
+      public fillRolelist(rolelist: Array<String>) : Array<Role>
+}
+
+export class PhaseCollector extends Unit<Phase> {
+      public engine: Engine
+      public current: Phase
+      public first: Phase
+      public set(...data: Array<Any>) : void
+      public move(end: boolean) : void
+      public jumpTo(phase: string) : void
+}
+
+export class PlayerCollector extends Unit<Player> {
+      public engine: Engine
+      public nolynch: NoLynch
+      public set(name: string) : Player
+      public all(): Array<Player|NoLynch>
+      public fromSide(side: string) : Unit<Player>
+      public withRole(role: string) : Unit<Player>
+      public clearvVotes() : void
+      public clearActions(): void
+      public executeActions(priorities: Array<String>): void
 }
 
 export class Engine {
-     constructor(settings: {rolelist: Array<string>, stalemate: () => boolean, majority: boolean, plurality: boolean, rules: (role: Role, side: String, alignment: String) => boolean, priorityList: Object})
+     public started: boolean
      public players: PlayerCollector
      public roles: RoleCollector
-     public sides: SideCollector
      public phases: PhaseCollector
+     public sides: SideCollector
      public timer: Timer
-     public actionManager: ActionManager
-     public settings: Settings
-     public started: boolean
-     public playercount: number
-     public rolesInGame: Array<String>
-     public roll(rolelist: Array<String>) : void
+     public events: EventListener
+     public rolelist: Array<String>
+     public majority: Majority
+     public priorities?: Array<String>
+     public roll(rolelist: Array<string>) : void
      public start() : void
-     public clear() : void
-     public on(event: "start",  listener: () => void) : void
-     public on(event: "setRole", listener: (player: Player) => void) : void
-     public on(event: "vote", listener: (voter: Player, votee: Player) => void) : void
-     public on(event: "unvote", listener: (voter: Player, votee: Player) => void) : void
-     public on(event: "kill", listener: (victim: Player, killer: Player) => void) : void
-     public on(event: "lynch", listener: (player: Player, way: "majority"|"plurality") => void) : void
-     public on(event: "deletePlayer", listener: (player: Player) => void) : void
-     public on(event: "setAction", listener: (player: Player) => void) : void
-     public on(event: "cancelAction", listener: (player: Player) => void) : void
-     public on(event: "cancelAction", listener: (player: Player) => void) : void
-     public on(event: "tick", listener: () => void) : void
-     public on(event: "executeAction", listener: (player: Player) => void) : void
-     public on(event: "factionalActionCancel", listener: (canceled: Player, newP: Player) => void) : void
-     public on(event: "end", listener: (winner: Side) => void) : void
-     public on(event: "Day", listener: (phase: Phase) => void) : void
-     public on(event: "Night", listener: (phase: Phase) => void) : void
 }
-
-
 
 
