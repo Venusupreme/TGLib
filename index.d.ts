@@ -1,14 +1,13 @@
 import {EventEmitter} from 'events';
-import { StringDecoder } from 'string_decoder';
 
-export class Listener extends EventEmitter {
+ class Listener extends EventEmitter {
       emitReturn(event: string, ...args: any) : any
 }
 
-export type callbackFetch<K, V> = (val: V, key: K) => boolean
-export type callbackCheck<K, V> = (val: V, key: K) => any
+ type callbackFetch<K, V> = (val: V, key: K) => boolean
+ type callbackCheck<K, V> = (val: V, key: K) => any
 
-export class Unit<V> extends Map<String, V> {
+ class Unit<V> extends Map<String, V> {
       public find(fn: callbackFetch<K, V>) : V
       public some(fn: callbackFetch<K, V>) : boolean
       public every(fn: callbackFetch<K, V>) : boolean
@@ -25,7 +24,7 @@ export class Unit<V> extends Map<String, V> {
       public forEach(fn: callbackCheck<K, V>) : void
 }
 
-export class Side {
+ class Side {
       public name: string
       public engine: Engine
       public members: Unit<Player>
@@ -34,7 +33,7 @@ export class Side {
       public toString() : string
 }
 
-export class Role {
+ class Role {
       public name: string
       public engine: Engine
       public side: Side
@@ -48,12 +47,14 @@ export class Role {
       public action?: (player: Player, target: Player, data: {}) => void
       public attack: number
       public defense: number
+      public priority: Array<Number>
       private common: {}
+      public setPriority(index: Number, subIndex: Number) : void
       public toString(): string
       public copy(rolledFrom: string) : Role
 }
 
-export class Action {
+ class Action {
       public player: Player
       public target: Player
       public data: {}
@@ -64,7 +65,7 @@ export class Action {
       public exe() : void
 }
 
-export class Phase {
+ class Phase {
    public name: string
    public engine: Engine
    public isFirst: boolean
@@ -74,12 +75,12 @@ export class Phase {
    public arrangements: Unit<Arrengement>
    public begin(): void
    public end(): void
-   public schedule(id: string, data: {executor: () => void, at?: number, when: number, checker?: () => boolean}) : Arrangement
+   public schedule(id: string, data: {executor: () => void, at?: number, when?: number, checker?: () => boolean}) : Arrangement
    public checkForArrangements() : void
    public toString(): string
 }
 
-export class Player {
+ class Player {
     public name: string
     public role?: Role
     public dead: boolean
@@ -103,7 +104,7 @@ export class Player {
     public toString() : string
 }
 
-export class NoLynch {
+ class NoLynch {
       public name: string
       public votes: number
       public votedBy: Unit<Player>
@@ -113,7 +114,7 @@ export class NoLynch {
       public toString() : string
 }
 
-export class Event {
+ class Event {
       public name: string
       public executable: (...args: any) => any
       public exe(...args: any) : any
@@ -121,7 +122,7 @@ export class Event {
       public extendAfter(fn: (...args) => any) : void
 }
 
-export class EventListener {
+ class EventListener {
       public events: Unit<Event>
       public on(event: string, fn: (...args: any) => any) : void
       public emit(event: string, ...args: any) : any
@@ -131,7 +132,7 @@ export class EventListener {
       public extendAll(when: "before"|"after", fn: (...args: any) => any) : void
 }
 
-export class Majority {
+ class Majority {
       public engine: Engine
       public value: number
       public update(): void
@@ -140,18 +141,19 @@ export class Majority {
       public toString(): string
 }
 
-export class Arrangement {
+ class Arrangement {
       public phase: Phase
       public id: string
       public executor: () => any
       public checker?: () => boolean
       public at: number
-      public when: "start"|"end"
+      public when: number
       public exe() : void
       public overwrite(data: {executor?: () => any, checker?: () => boolean, at?: number, when?: "start"|"end"}) : void
+      public cancel() : void
 }
 
-export class Timer {
+ class Timer {
       public engine: Engine
       public elapsed: number
       public startedAt: number
@@ -161,15 +163,16 @@ export class Timer {
       public reset(): void
 }
 
-export class SideCollector extends Unit<Side> {
+ class SideCollector extends Unit<Side> {
      public engine: Engine
      public set(name: string) : Side
      public sizeOf(side: string) : number
 }
 
-export class RoleCollector extends Unit<Role> {
+ class RoleCollector extends Unit<Role> {
       public engine: Engine
       public set(...roles: Array<{}>) : void
+      public orderRolesByPriority() : Array<Role>
       public rules: (side: string, alignment?: string|null, role: Role) => boolean
       public any(): Role
       public getByName(name: string): Role
@@ -179,28 +182,28 @@ export class RoleCollector extends Unit<Role> {
       public fillRolelist(rolelist: Array<String>) : Array<Role>
 }
 
-export class PhaseCollector extends Unit<Phase> {
+ class PhaseCollector extends Unit<Phase> {
       public engine: Engine
       public current: Phase
       public first: Phase
       public set(...data: Array<Any>) : void
       public move(end: boolean) : void
-      public jumpTo(phase: string) : void
+      public jumpTo(phase: string, emitEnd: boolean) : void
 }
 
-export class PlayerCollector extends Unit<Player> {
+ class PlayerCollector extends Unit<Player> {
       public engine: Engine
       public nolynch: NoLynch
       public set(name: string) : Player
       public all(): Array<Player|NoLynch>
       public fromSide(side: string) : Unit<Player>
       public withRole(role: string) : Unit<Player>
-      public clearvVotes() : void
+      public clearVotes() : void
       public clearActions(): void
-      public executeActions(priorities: Array<String>): void
+      public executeActions(): void
 }
 
-export class Engine {
+ class Engine {
      public started: boolean
      public players: PlayerCollector
      public roles: RoleCollector
@@ -210,9 +213,36 @@ export class Engine {
      public events: EventListener
      public rolelist: Array<String>
      public majority: Majority
-     public priorities?: Array<String>
      public roll(rolelist: Array<string>) : void
      public start() : void
 }
+
+/**export interface Exported {
+      static Structrues: {
+            Action: Action,
+            NoLynch: NoLynch,
+            Phase: Phase,
+            Player: Player,
+            Role: Role,
+            Side: Side
+        }
+        static Mechanics: {
+            Arrangement: Arrangement,
+            EventListener: EventListener,
+            Majority: Majority,
+            Timer: Timer
+        }
+        static Collectors: {
+            PhaseCollector: PhaseCollector,
+            PlayerCollector: PlayerCollector,
+            RoleCollector: RoleCollector,
+            SideCollector: SideCollector
+        }
+        static DataStorage: {
+            Unit: Unit,
+            PriorityList: PriorityList
+        }
+        static Engine: Engine
+} **/
 
 

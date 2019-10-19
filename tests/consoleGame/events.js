@@ -1,6 +1,12 @@
 
 
 module.exports = function(Game) {
+
+     Game.events.on("Day-End", phase => {
+          console.log("End of day 1!");
+     });
+
+
      Game.events.on("Day", phase => {
           console.log(`It's Day ${phase.iterations}`);
      });
@@ -9,16 +15,24 @@ module.exports = function(Game) {
           console.log(`It's Night ${phase.iterations}`);
      });
 
+     Game.events.on("Secret", phase => {
+          console.log("Secret phase activated!");
+     })
+
      Game.events.on("Night-End", phase => {
             Game.players.executeActions();
             Game.players.clearActions();
      });
 
      Game.events.on("checkWin", () => {
-          if (Game.sides.sizeOf("Mafia") === 0) return "Town";
           if (Game.sides.sizeOf("Town") === 0) return "Mafia";
-          return false;
+           if (Game.sides.sizeOf("Mafia") === 0) return "Town";
+          return false; 
      });
+
+     Game.events.on("win", side => {
+          console.log(`${side.name} wins!`);
+     })
 
      Game.events.on("setRole", player => {
         console.log(`${player} is ${player.role}`);
@@ -60,5 +74,9 @@ module.exports = function(Game) {
          Game.onTrial.invisible = false;
          Game.onTrial = null;
          for ([, player] of Game.players) player.judge = "abstain";
+     });
+
+     Game.events.on("kill", (killer, target) => {
+           console.log(`${target} was killed by ${killer}`)
      });
 }
