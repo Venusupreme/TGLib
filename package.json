@@ -1,6 +1,6 @@
 {
   "name": "toslib",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The official Testing Grounds library. Contains \"Town Of Salem\" logic, roles, actions and all.",
   "main": "index.js",
   "types": "index.d.ts",
