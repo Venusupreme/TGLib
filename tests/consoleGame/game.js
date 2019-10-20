@@ -13,15 +13,6 @@ const player1 = Game.players.set("Volen");
 const player2 = Game.players.set("Arzu");
 const player3 = Game.players.set("Niko");
 
-Game.phases.get("Night").schedule("throw", {
-    executor: () => Game.throw(true),
-});
-
-Game.phases.get("Night").schedule("unthrow", {
-   executor: () => Game.throw(false),
-   when: 9
-});
-
 /**Game.phases.get("Judgement").schedule("setvotes", {
    executor: () => {
        player1.judge = "guilty";

@@ -96,7 +96,7 @@ import {EventEmitter} from 'events';
     public actionHistory: Unit<Action>
     public votesFor(player: Player) : void
     public unvote() : void
-    public canKill(target: PLayer) : boolean
+    public canKill(target: Player) : boolean
     public kill(killer?: Player) : void
     public revive(reviver?: Player) : void
     public setAction(target: Player, data: {factionAction?: Boolean}) : void
@@ -130,6 +130,20 @@ import {EventEmitter} from 'events';
       public off(event: string) : void
       public get(event: string) : Event
       public extendAll(when: "before"|"after", fn: (...args: any) => any) : void
+      public on(event: "start", fn: () => any) : void
+      public on(event: "setRole", fn: (player: Player) => any) : void
+      public on(event: "setAction", fn: (player: Player) => any) : void
+      public on(event: "kill", fn: (player: Player, killer: Player) => any) : void
+      public on(event: "setVotePower", fn: (player: Player) => any) : void
+      public on(event: "majority", fn: (lynched: Player) => any) : void
+      public on(event: "plurality", fn: (lynched: Player) => any) : void
+      public on(event: "cancelAction", fn: (player: Player) => any) : void
+      public on(event: "setFactionAction", fn: (player: Player) => any) : void
+      public on(event: "cancelFactionAction", fn: (player: Player) => any) : void
+      public on(event: "revive", fn: (player: Player, reviver: Player) => any) : void
+      public on(event: "vote", fn: (voter: Player, votee: Player) => any) : void
+      public on(event: "unvote", fn: (unvoter: Player, unvotee: Player) => any) : void
+      public on(event: "checkWin", fn: () => string|false) : void
 }
 
  class Majority {
@@ -179,6 +193,7 @@ import {EventEmitter} from 'events';
       public fromRandomSide(side: string) : Role
       public fromAlignment(side: string, alignment: string) : Role
       public fill(side: string, alignment: string) : Role
+      public validateFill(str: string) : Boolean
       public fillRolelist(rolelist: Array<String>) : Array<Role>
 }
 
