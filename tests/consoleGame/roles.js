@@ -12,14 +12,14 @@ module.exports = [
         side: "Town",
         alignment: "Investigative",
         priority: [2, 2],
-        interactions: [
+       /** interactions: [
             {
                 role: "Lookout",
                 executor: (thisPlayer, target) => {
                     console.log("This is an interaction!")
                 }
             }
-        ],
+        ], **/
         common: {actionType: "check"},
         action: (player, target, data) => {
             if (target.framed) return console.log(`${target} is a member of the mafia!`);

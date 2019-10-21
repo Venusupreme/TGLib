@@ -3,7 +3,7 @@
 
 
 module.exports = [
-    {name: "Day", duration: 10, isFirst: true, next: "Night", iterations: 0},
+    {name: "Day", duration: 5, isFirst: true, next: "Night", iterations: 0},
     {name: "Night", duration: 10, next: "Day"},
     {name: "Defense", duration: 10, next: "Judgement"},
     {name: "Judgement", duration: 10, next: "Last Words"},

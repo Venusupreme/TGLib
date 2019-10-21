@@ -5,7 +5,7 @@ const Mafia = require("../../index.js");
 const Game = new Mafia.Engine();
 
 Game.roles.set(...require("./roles.js"));
-Game.rolelist = ["Sheriff", "Lookout", "Goon"];
+Game.rolelist = ["Goon", "Goon", "Sheriff"];
 for (let phase of require("./phases.js")) Game.phases.set(phase);
 require("./events.js")(Game);
 
@@ -15,9 +15,8 @@ const player3 = Game.players.set("Niko");
 
 Game.phases.get("Night").schedule("test", {
     executor: () => {
-        const sheriff = Game.players.find(p => p.role.name === 'Sheriff');
-        const lo = Game.players.find(p => p.role.name === 'Lookout');
-        sheriff.setAction(lo);
+        const goon = Game.players.find(p => p.role.name === "Goon");
+        goon.setAction(Game.players.random());
     },
     when: 3,
     at: 1

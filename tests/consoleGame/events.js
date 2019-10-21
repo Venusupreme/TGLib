@@ -43,6 +43,7 @@ module.exports = function(Game) {
      });
 
      Game.events.on("setFactionAction", player => {
+          console.log(player.action);
          console.log(`${player} is doing the factional kill!`);
      });
 
@@ -79,4 +80,8 @@ module.exports = function(Game) {
      Game.events.on("kill", (killer, target) => {
            console.log(`${target} was killed by ${killer}`)
      });
+
+     Game.events.on("setAction", () => {
+          console.log("ACTION IS SET AFTER 'setFactionAction' is triggered!");
+     })
 }

@@ -13,6 +13,7 @@ import {EventEmitter} from 'events';
       public every(fn: callbackFetch<K, V>) : boolean
       public filter(fn: callbackFetch<K, V>) : Unit<V>
       public map(fn: callbackCheck<K, V>) : Array<V>
+      public mapUnit(fn: callbackCheck<K, V>) : Unit<V>
       public random(amount: number) : V|Unit<V>
       public sweep(fn: callbackFetch<K, V>) : Unit<V>
       public partition(fn: callbackFetch<K, V>) : Array<Unit<V>>
@@ -115,16 +116,6 @@ import {EventEmitter} from 'events';
       public toString() : string
 }
 
-class Interaction {
-      public role: string
-      public executor: (player1: Player, player2: Player, other: {}) => void
-      public exe(player1: Player, player2: Player, other: {}) : void
- }
-
- class InteractionManager extends Map<Interaction> {
-       public set(...interactions: {}) : void
-       public exe(player1: Player, player2: Player, other: {}) : void
-  }
 
  class Event {
       public name: string
