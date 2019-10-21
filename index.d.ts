@@ -185,6 +185,8 @@ import {EventEmitter} from 'events';
 
  class RoleCollector extends Unit<Role> {
       public engine: Engine
+      public cache: Unit<Role>
+      public inGame: Array<Role>
       public set(...roles: Array<{}>) : void
       public orderRolesByPriority() : Array<Role>
       public rules: (side: string, alignment?: string|null, role: Role) => boolean
