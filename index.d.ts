@@ -52,6 +52,7 @@ import {EventEmitter} from 'events';
       public setPriority(index: Number, subIndex: Number) : void
       public toString(): string
       public copy(rolledFrom: string) : Role
+      public hardCopy(rolledFrom: string) : Role
 }
 
  class Action {
@@ -113,6 +114,17 @@ import {EventEmitter} from 'events';
       public clear() : void
       public toString() : string
 }
+
+class Interaction {
+      public role: string
+      public executor: (player1: Player, player2: Player, other: {}) => void
+      public exe(player1: Player, player2: Player, other: {}) : void
+ }
+
+ class InteractionManager extends Map<Interaction> {
+       public set(...interactions: {}) : void
+       public exe(player1: Player, player2: Player, other: {}) : void
+  }
 
  class Event {
       public name: string
