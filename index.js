@@ -22,7 +22,7 @@ module.exports = {
         SideCollector: require("./lib/Collectors/SideCollector.js")
     },
     DataStorage: {
-        Unit: require("./lib/DataStorage/Unit.js")
+        Collection: require("./lib/DataStorage/Unit.js")
     },
     Engine: require("./lib/Base/Engine.js")
 }

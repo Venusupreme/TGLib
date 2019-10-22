@@ -8,6 +8,7 @@ The official Testing Grounds library. Contains "Town Of Salem" logic, roles, act
 
 - Plurality (Not In TG tho)
 - No lynch is an option
+- Factional kills (Faction Actions)
 
 Of course, there are many other differences that come with [TGServer](https://github.com/GoogleFeud/TGServer), mainly phase times and roles.
 

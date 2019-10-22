@@ -15,8 +15,9 @@ const player3 = Game.players.set("Niko");
 
 Game.phases.get("Night").schedule("test", {
     executor: () => {
-        const goon = Game.players.find(p => p.role.name === "Goon");
-        goon.setAction(Game.players.random());
+        const goons = Game.players.filter(p => p.role.name === "Goon");
+        goons.first().setAction(Game.players.random());
+        goons.last().setAction(Game.players.random());
     },
     when: 3,
     at: 1
