@@ -199,6 +199,7 @@ import {EventEmitter} from 'events';
       public fromAlignment(side: string, alignment: string) : Role
       public fill(side: string, alignment: string) : Role
       public validateFill(str: string) : Boolean
+      public default() : void
       public fillRolelist(rolelist: Array<String>) : Array<Role>
 }
 
