@@ -33,5 +33,3 @@ Game.phases.get("Night").schedule("test", {
 }); **/
 
 Game.start();
-
-
